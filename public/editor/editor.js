@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	var isSample = false;
 	function getParameters() {
 		var parameters = {};
 		window.location.search.substr(1).split('&').forEach(function(pair) {
@@ -97,7 +98,7 @@ $(document).ready(function() {
 		height: 'auto',
 		cmsettings: {
 			lineNumbers: true,
-			readOnly: isSample
+			readOnly: false
 		}
 	});
 	if (parameters.get('lhs', null)) {
@@ -160,6 +161,7 @@ $(document).ready(function() {
 	});
 	
 	// Load
+	var key = "";
 	if (key.length == 8) {
 		$.when(
 			$.ajax({

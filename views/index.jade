@@ -1,0 +1,206 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title Mergely - Diff online, merge documents
+
+    link(rel='shortcut icon', href='/favicon.ico')
+    link(rel='canonical', href='http://www.mergely.com')
+    link(href='/public/stylesheets/font.css', rel='stylesheet', type='text/css')
+
+    script(type='text/javascript', src='/public/javascripts/jquery.min.js')
+    script(type='text/javascript', src='/public/javascripts/jquery-ui.min.js')
+
+    link(type='text/css', rel='stylesheet', href='/public/stylesheets/jquery-ui-1.10.1.custom.css')
+    link(type='text/css', rel='stylesheet', href='/public/editor/lib/wicked-ui.css')
+
+    script(type='text/javascript', src='/public/editor/lib/wicked-ui.js')
+    
+    link(type='text/css', rel='stylesheet', href='/public/editor/lib/tipsy/tipsy.css')
+    
+    script(type='text/javascript', src='/public/editor/lib/tipsy/jquery.tipsy.js')
+    script(type='text/javascript', src='/public/editor/lib/farbtastic/farbtastic.js')
+    
+    link(type='text/css', rel='stylesheet', href='/public/editor/lib/farbtastic/farbtastic.css')
+    
+    script(type='text/javascript', src='/public/lib/codemirror.js')
+    script(type='text/javascript', src='/public/lib/mergely.js')
+    script(type='text/javascript', src='/public/editor/editor.js')
+    
+    link(type='text/css', rel='stylesheet', href='/public/lib/codemirror.css')
+    link(type='text/css', rel='stylesheet', href='/public/stylesheets/mergely.css')
+    link(type='text/css', rel='stylesheet', href='/public/editor/editor.css')
+    
+    script(type='text/javascript', src='/public/lib/searchcursor.js')
+
+  body(style='visibility:hidden')
+   
+    #banner
+    // menu
+    ul#main-menu
+      li(accesskey='f')
+        | File
+        ul
+          li#file-new(accesskey='n', data-hotkey='Alt+N') New
+          li#file-import(data-icon='icon-import') Import...
+          li#file-save(accesskey='s', data-hotkey='Alt+S', data-icon='icon-save') Save .diff
+          li.separator
+          li#file-share(data-icon='icon-share') Share
+      li(accesskey='l')
+        | Left
+        ul
+          li#edit-left-undo(accesskey='z', data-hotkey='Ctrl+Z', data-icon='icon-undo') Undo
+          li#edit-left-redo(accesskey='y', data-hotkey='Ctrl+Y', data-icon='icon-redo') Redo
+          li#edit-left-find Find
+          li.separator
+          li#edit-left-merge-right(data-hotkey='Alt+→', data-icon='icon-arrow-right-v') Merge change right
+          li#edit-left-merge-right-file(data-icon='icon-arrow-right-vv') Merge file right
+          li#edit-left-readonly Read only
+          li.separator
+          li#edit-left-clear Clear
+      li(accesskey='r')
+        | Right
+        ul
+          li#edit-right-undo(accesskey='z', data-hotkey='Ctrl+Z', data-icon='icon-undo') Undo
+          li#edit-right-redo(accesskey='y', data-hotkey='Ctrl+Y', data-icon='icon-redo') Redo
+          li#edit-right-find Find
+          li.separator
+          li#edit-right-merge-left(data-hotkey='Alt+←', data-icon='icon-arrow-left-v') Merge change left
+          li#edit-right-merge-left-file(data-icon='icon-arrow-left-vv') Merge file left
+          li#edit-right-readonly Read only
+          li.separator
+          li#edit-right-clear Clear
+      li(accesskey='v')
+        | View
+        ul
+          li#view-swap(data-icon='icon-swap') Swap sides
+          li.separator
+          li#view-refresh(accesskey='v', data-hotkey='Alt+V', title='Generates diff markup') Render diff view
+          li#view-clear(accesskey='c', data-hotkey='Alt+C', title='Clears diff markup') Clear render
+          li.separator
+          li#view-change-prev(data-hotkey='Alt+↑', title='View previous change') View prev change
+          li#view-change-next(data-hotkey='Alt+↓', title='View next change') View next change
+      li(accesskey='o')
+        | Options
+        ul
+          li#options-wrap Wrap lines
+          li#options-ignorews Ignore white space
+          li.separator
+          li#options-viewport(title='Improves performance for large files') Enable viewport
+          li#options-sidebars(title='Improves performance for large files') Enable side bars
+          li#options-swapmargin Swap right margin
+          li#options-linenumbers Enable line numbers
+          li.separator
+          li#options-autodiff(title='Diffs are computed automatically') Enable auto-diff
+          li.separator
+          li#options-colors Colors...
+      li(accesskey='m')
+        | Mergely
+        ul
+          li
+            a.link(href='/', target='site') Home
+          li
+            a.link(href='/about', target='site') About
+          li
+            a.link(href='/license', target='site') License
+          li
+            a.link(href='/download', target='site') Download
+          li
+            a.link(href='/doc', target='site') Mergely development guide
+          li.separator
+          li
+            a.link(href='/united-states-declaration-of-independence?wl=1', target='_blank') United States Declaration of Independence Draft
+    // toolbar
+    ul#toolbar
+      li#tb-file-import(data-icon='icon-import', title='Import') Import
+      li#tb-file-save(data-icon='icon-save', title='Save .diff') Save .diff
+      li.separator
+      li#tb-view-change-prev(data-icon='icon-arrow-up', title='Previous change') Previous change
+      li#tb-view-change-next(data-icon='icon-arrow-down', title='Next change') Next change
+      li.separator
+      li#tb-edit-right-merge-left(data-icon='icon-arrow-left-v', title='Merge change left') Merge change left
+      li#tb-edit-left-merge-right(data-icon='icon-arrow-right-v', title='Merge change right') Merge change right
+      li#tb-view-swap(data-icon='icon-swap', title='Swap sides') Swap sides
+    // dialog upload
+    #dialog-upload(title='File import', style='display:none')
+      .tabs
+        ul
+          li
+            a(href='#tabs-1') Import File
+          li
+            a(href='#tabs-2') Import URL
+        #tabs-1
+          p
+            | Files are imported directly into your browser.  They are 
+            em not
+            |  uploaded to the server.
+          label(for='file-lhs') Left file
+          input#file-lhs(style='display:inline-block', type='file')
+          #file-lhs-progress
+            .progress-label Loading...
+          br
+          label(for='file-rhs') Right file
+          input#file-rhs(style='display:inline-block', type='file')
+          #file-rhs-progress
+            .progress-label Loading...
+          br
+        #tabs-2
+          p
+            | Files are imported directly into your browser.  They are 
+            em not
+            |  uploaded to the server.
+          label(for='url-lhs') Left URL
+          input#url-lhs(type='input', size='40')
+          #file-lhs-progress
+            .progress-label Loading...
+          br
+          label(for='url-rhs') Right URL
+          input#url-rhs(type='input', size='40')
+          #file-rhs-progress
+            .progress-label Loading...
+          br
+    // dialog colors
+    #dialog-colors(title='Mergely Color Settings', style='display:none')
+      #picker(style='float: right;')
+      fieldset
+        legend Changed
+        label(for='c-border') Border:
+        input#c-border.colorwell(type='text', name='c-border')
+        br
+        label(for='c-bg') Background:
+        input#c-bg.colorwell(type='text', name='c-bg')
+        br
+      fieldset
+        legend Added
+        label(for='a-border') Border:
+        input#a-border.colorwell(type='text', name='a-border')
+        br
+        label(for='a-bg') Background:
+        input#a-bg.colorwell(type='text', name='a-bg')
+        br
+      fieldset
+        legend Deleted
+        label(for='d-border') Border:
+        input#d-border.colorwell(type='text', name='d-border')
+        br
+        label(for='d-bg') Background:
+        input#d-bg.colorwell(type='text', name='d-bg')
+        br
+    // dialog confirm
+    #dialog-confirm(title='Save a Permanent Copy?', style='display:none;')
+      p
+        | Are you sure you want to save? A permanent copy will be
+        | created at the server and a link will be provided for you to share the URL
+        | in an email, blog, twitter, etc.
+    // find
+    .find
+      input(type='text')
+      button.find-prev
+        span.icon.icon-arrow-up
+      button.find-next
+        span.icon.icon-arrow-down
+      button.find-close
+        span.icon.icon-x-mark
+    // editor
+    div(style='position: absolute;top: 73px;bottom: 10px;left: 5px;right: 5px;overflow-y: hidden;padding-bottom: 2px;')
+      #mergely
